@@ -20,13 +20,13 @@ jobs:
         dotnet-version: '7.0.401'  # Use the specific version of .NET 7 you are using
 
     - name: Restore dependencies
-      run: dotnet restore ./initiate-rest-api/Initiate/Initiate.sln
+      run: dotnet restore ./Initiate/Initiate.sln
 
     - name: Build solution
-      run: dotnet build ./initiate-rest-api/Initiate/Initiate.sln --no-restore --configuration Release
+      run: dotnet build ./Initiate/Initiate.sln --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test ./initiate-rest-api/Initiate/Initiate.sln --no-build --verbosity normal
+      run: dotnet test ./Initiate/Initiate.sln --no-build --verbosity normal
 
     - name: Publish project
-      run: dotnet publish ./initiate-rest-api/Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj --no-build --configuration Release --output publish
+      run: dotnet publish ./Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj --no-build --configuration Release --output publish
