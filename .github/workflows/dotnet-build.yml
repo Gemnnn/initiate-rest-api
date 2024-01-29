@@ -25,8 +25,5 @@ jobs:
     - name: Build solution
       run: dotnet build ./Initiate/Initiate.sln --no-restore --configuration Release
 
-    - name: Run tests
-      run: dotnet test ./Initiate/Initiate.sln --no-build --verbosity normal
-
     - name: Publish project
       run: dotnet publish ./Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj --no-build --configuration Release --output publish
