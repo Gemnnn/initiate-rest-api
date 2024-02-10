@@ -19,6 +19,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Allows all type of requests
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()  
+               .AllowAnyMethod()  
+               .AllowAnyHeader(); 
+    });
+});
+
 // Add ASP.NET Core Identity services
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -54,6 +65,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication(); // Make sure to call UseAuthentication before UseAuthorization
 app.UseAuthorization();
