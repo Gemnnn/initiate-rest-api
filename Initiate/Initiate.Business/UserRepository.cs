@@ -1,6 +1,7 @@
 ﻿using Initiate.DataAccess;
 using Initiate.Model;
 using Microsoft.AspNetCore.Identity;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Initiate.Business
@@ -16,25 +17,43 @@ namespace Initiate.Business
             _signInManager = signInManager;
         }
 
-        public async Task<bool> RegisterUser(UserRegistrationDTO userDto)
+        public async Task<bool> RegisterUser(UserDTO userDto)
         {
-            var user = new User { UserName = userDto.Email, Email = userDto.Email };
-            var result = await _userManager.CreateAsync(user, userDto.Password);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.Email))
+                    throw new Exception($"Invalid user information: Email - '{userDto.Email}',  Password - '{userDto.Password}' ");
 
-
-
-            return result.Succeeded;
+                var user = new User { UserName = userDto.Email, Email = userDto.Email };
+                var result = await _userManager.CreateAsync(user, userDto.Password);
+                return result.Succeeded;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
-        public async Task<User> LoginUser(string email, string password)
+        public async Task<bool> LoginUser(UserDTO userDto)
         {
-            var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
-            if (result.Succeeded)
+            try
             {
-                var user = await _userManager.FindByEmailAsync(email);
-                return user;
+                if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.Email))
+                    throw new Exception($"Invalid user information: Email - '{userDto.Email}',  Password - '{userDto.Password}' ");
+
+                var user = await _userManager.FindByNameAsync(userDto.Email);
+                
+                if (user == null)
+                    return false;
+
+                var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, lockoutOnFailure: false);
+
+                return result.Succeeded;
             }
-            return null; // Login failed
+            catch (Exception e)
+            {
+                return false;
+            }
         }
     }
 }

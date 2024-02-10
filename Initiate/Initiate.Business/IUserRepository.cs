@@ -10,7 +10,7 @@ namespace Initiate.Business
 {
     public interface IUserRepository
     {
-        Task<bool> RegisterUser(UserRegistrationDTO userDto);
-        Task<User> LoginUser(string email, string password);
+        Task<bool> RegisterUser(UserDTO userDto);
+        Task<bool> LoginUser(UserDTO userDto);
     }
 }
