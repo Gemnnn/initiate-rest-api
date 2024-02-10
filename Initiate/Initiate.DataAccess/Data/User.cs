@@ -2,9 +2,10 @@
 
 namespace Initiate.DataAccess
 {
-    public class User
+    public class User : IdentityUser
     {
-        public string? FirstName {  get; set; }
-        public string? LastName {  get; set; }
+        // Additional properties can be defined here.
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
     }
 }
