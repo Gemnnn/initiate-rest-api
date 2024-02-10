@@ -14,5 +14,7 @@ namespace Initiate.DataAccess
         }
 
         public DbSet<News> News { get; set; }
+
+        public DbSet<User> Users { get; set; }
     }
 }
