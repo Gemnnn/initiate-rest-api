@@ -20,7 +20,7 @@ public class UserController : ControllerBase
 
         if (result)
         {
-            return Ok("User registered successfully.");
+            return Ok( new UserResponse("User registered successfully.",result));
         }
 
         return BadRequest("User registration failed.");
@@ -33,7 +33,7 @@ public class UserController : ControllerBase
 
         if (result)
         {
-            return Ok("Login successful.");
+            return Ok( new UserResponse("Success",result));
         }
 
         return Unauthorized("Invalid credentials.");
