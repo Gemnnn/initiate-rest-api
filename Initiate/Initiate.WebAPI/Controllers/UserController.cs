@@ -16,26 +16,28 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserDTO registrationDto)
     {
-        var result = await _userRepository.RegisterUser(registrationDto);
-
-        if (result)
+        try
         {
-            return Ok( new UserResponse("User registered successfully.",result));
+            var result = await _userRepository.RegisterUser(registrationDto);
+            return Ok(new UserResponse(result ? "User registered successfully." : "User registration failed.", result));
         }
-
-        return BadRequest("User registration failed.");
+        catch (Exception e)
+        {
+            return Ok(new UserResponse(e.Message, false));
+        }
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserDTO userLoginDto)
     {
-        var result = await _userRepository.LoginUser(userLoginDto);
-
-        if (result)
+        try
         {
-            return Ok( new UserResponse("Success",result));
+            var result = await _userRepository.LoginUser(userLoginDto);
+            return Ok(new UserResponse(result ? "Success" : "Fail", result));
         }
-
-        return Unauthorized("Invalid credentials.");
+        catch (Exception e)
+        {
+            return Ok(new UserResponse(e.Message, false));
+        }
     }
 }
