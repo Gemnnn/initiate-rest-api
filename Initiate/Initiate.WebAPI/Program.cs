@@ -2,32 +2,37 @@ using Initiate.Business;
 using Initiate.DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Add services to the container.
 
-// Use SQL Lite
+// Use SQLite or SQL Server based on your requirements
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-//Allows all type of requests
+// Allows only specific type of requests in production for security
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    if (builder.Environment.IsDevelopment())
     {
-        builder.AllowAnyOrigin()  
-               .AllowAnyMethod()  
-               .AllowAnyHeader(); 
-    });
+        options.AddPolicy("AllowAll", builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    }
+    else
+    {
+        // Apply more restrictive CORS policy for production
+        options.AddPolicy("AllowSpecific", builder =>
+        {
+            // Set up your specific CORS policy here
+        });
+    }
 });
 
 // Add ASP.NET Core Identity services
@@ -35,23 +40,28 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// Configure Identity cookie settings
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Configure your cookie settings here for production security
+});
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
 
 // Add Interfaces 
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>(); // Ensure IUserRepository and UserRepository are correctly implemented
-
-builder.Services.AddControllers();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Authentication & Authorization
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme) // Use IdentityConstants.ApplicationScheme for Identity
-   .AddNegotiate();
+// Ensure you're using the correct authentication scheme
+//builder.Services.AddAuthentication(/* Your preferred authentication scheme */)
+//   .AddNegotiate(); // Use this only if you need Windows authentication
 
 builder.Services.AddAuthorization();
 
@@ -64,14 +74,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection in production
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseCors("AllowAll");
+app.UseCors(builder.Environment.IsDevelopment() ? "AllowAll" : "AllowSpecific");
 
-app.UseAuthentication(); // Make sure to call UseAuthentication before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.Run();
