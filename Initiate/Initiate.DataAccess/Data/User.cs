@@ -7,5 +7,6 @@ namespace Initiate.DataAccess
         // Additional properties can be defined here.
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public bool isSignedIn { get; set; }
     }
 }

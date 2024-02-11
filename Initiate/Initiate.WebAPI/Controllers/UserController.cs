@@ -40,4 +40,18 @@ public class UserController : ControllerBase
             return Ok(new UserResponse(e.Message, false));
         }
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] UserDTO userDto)
+    {
+        try
+        {
+            var result = await _userRepository.LogoutUser(userDto);
+            return Ok(new UserResponse(result ? "Success" : "Fail", result));
+        }
+        catch (Exception e)
+        {
+            return Ok(new UserResponse(e.Message, false));
+        }
+    }
 }

@@ -12,5 +12,6 @@ namespace Initiate.Business
     {
         Task<bool> RegisterUser(UserDTO userDto);
         Task<bool> LoginUser(UserDTO userDto);
+        Task<bool> LogoutUser(UserDTO userDto);
     }
 }
