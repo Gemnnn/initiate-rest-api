@@ -67,7 +67,7 @@ namespace Initiate.Business
         {
             try
             {
-                News? news = await m_db.News.FirstOrDefaultAsync(n => n.Id == id);
+                News? news = await m_db.News.FirstOrDefaultAsync(n => n.NewsId == id);
 
                 if (news == null)
                     throw new Exception("News is no found");

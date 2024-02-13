@@ -40,7 +40,19 @@ namespace Initiate.Business
                 if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.Email))
                     throw new Exception($"Invalid user information: Email - '{userDto.Email}',  Password - '{userDto.Password}' ");
 
-                var user = new User { UserName = userDto.Email, Email = userDto.Email };
+                var preference = new Preference()
+                {
+                    AddressId = 1,
+                    GenerateDate = DateTime.Now,
+                    Language = string.Empty
+                };
+
+                await _db.Preferences.AddAsync(preference);
+                await _db.SaveChangesAsync();
+
+                var newPreference = await _db.Preferences.FirstOrDefaultAsync();
+
+                var user = new User { UserName = userDto.Email, Email = userDto.Email, PreferenceId = newPreference.PreferenceId };
                 var result = await _userManager.CreateAsync(user, userDto.Password);
 
                 _logger.LogWarning($"Class:{ClassName}, Method: {methodName}, Message: 'Exit' ");
