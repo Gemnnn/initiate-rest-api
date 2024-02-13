@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Initiate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240213031851_init")]
+    [Migration("20240213032609_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -139,15 +139,6 @@ namespace Initiate.DataAccess.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Preferences");
-
-                    b.HasData(
-                        new
-                        {
-                            PreferenceId = 1,
-                            AddressId = 1,
-                            GenerateDate = new DateTime(2024, 2, 12, 22, 18, 51, 50, DateTimeKind.Local).AddTicks(7078),
-                            Language = "English"
-                        });
                 });
 
             modelBuilder.Entity("Initiate.DataAccess.User", b =>

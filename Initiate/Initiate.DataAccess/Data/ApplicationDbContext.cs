@@ -53,16 +53,16 @@ namespace Initiate.DataAccess
                     }
                 );
 
-            builder.Entity<Preference>()
-                .HasData(
-                    new Preference()
-                    {
-                        PreferenceId = 1,
-                        AddressId = 1,
-                        GenerateDate = DateTime.Now,
-                        Language = "English"
-                    }
-                );
+            //builder.Entity<Preference>()
+            //    .HasData(
+            //        new Preference()
+            //        {
+            //            PreferenceId = 1,
+            //            AddressId = 1,
+            //            GenerateDate = DateTime.Now,
+            //            Language = "English"
+            //        }
+            //    );
         }
 
         public DbSet<News> News { get; set; }

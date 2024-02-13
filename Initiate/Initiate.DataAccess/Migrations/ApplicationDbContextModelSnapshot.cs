@@ -136,15 +136,6 @@ namespace Initiate.DataAccess.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Preferences");
-
-                    b.HasData(
-                        new
-                        {
-                            PreferenceId = 1,
-                            AddressId = 1,
-                            GenerateDate = new DateTime(2024, 2, 12, 22, 18, 51, 50, DateTimeKind.Local).AddTicks(7078),
-                            Language = "English"
-                        });
                 });
 
             modelBuilder.Entity("Initiate.DataAccess.User", b =>

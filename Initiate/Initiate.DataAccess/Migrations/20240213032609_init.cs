@@ -364,11 +364,6 @@ namespace Initiate.DataAccess.Migrations
                 columns: new[] { "AddressId", "CountryId", "ProvinceId" },
                 values: new object[] { 1, 1, 1 });
 
-            migrationBuilder.InsertData(
-                table: "Preferences",
-                columns: new[] { "PreferenceId", "AddressId", "GenerateDate", "Language" },
-                values: new object[] { 1, 1, new DateTime(2024, 2, 12, 22, 18, 51, 50, DateTimeKind.Local).AddTicks(7078), "English" });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_CountryId",
                 table: "Addresses",
