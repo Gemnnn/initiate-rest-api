@@ -1,12 +1,9 @@
-namespace Initiate.Model;
-
-public class UserResponse
+namespace Initiate.Model
 {
-    public UserResponse(string message, bool isSuccess)
+    public class UserResponse : ResponseBase
     {
-        this.message = message;
-        this.isSuccess = isSuccess;
+        public UserResponse(string message, bool isSuccess) : base(message, isSuccess)
+        {
+        }
     }
-    public bool isSuccess { get; set; }
-    public string message { get; set; }
 }

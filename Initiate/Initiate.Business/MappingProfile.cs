@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Initiate.DataAccess;
 using Initiate.Model;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Initiate.Business
 {
@@ -9,6 +10,9 @@ namespace Initiate.Business
         public MappingProfile()
         {
             CreateMap<News, NewsDTO>().ReverseMap();
+
         }
+    
     }
+
 }

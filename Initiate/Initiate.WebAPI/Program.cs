@@ -55,6 +55,7 @@ builder.Services.AddControllers();
 // Add Interfaces 
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

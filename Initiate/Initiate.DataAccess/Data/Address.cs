@@ -6,10 +6,6 @@ namespace Initiate.DataAccess;
 public class Address
 {
     public int AddressId { get; set; }
-    public int CountryId { get; set; }
-    [ForeignKey("CountryId")]
-    public Country Country { get; set; }
-    public int ProvinceId { get; set; }
-    [ForeignKey("ProvinceId")]
-    public Province Province { get; set; }
+    public string Country { get; set; }
+    public string ProvinceName { get; set; }
 }
