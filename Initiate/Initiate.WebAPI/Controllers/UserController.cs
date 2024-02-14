@@ -1,5 +1,7 @@
 ﻿using Initiate.Business;
+using Initiate.DataAccess;
 using Initiate.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -7,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 public class UserController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    private readonly UserManager<User> _userManager;
 
-    public UserController(IUserRepository userRepository)
+    public UserController(IUserRepository userRepository, UserManager<User> userManager)
     {
         _userRepository = userRepository;
+        _userManager = userManager;
     }
 
     [HttpPost("register")]
@@ -23,7 +27,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return Ok(new UserResponse(e.Message, false));
+            return Unauthorized(new UserResponse(e.Message, false));
         }
     }
 
@@ -37,7 +41,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return Ok(new UserResponse(e.Message, false));
+            return Unauthorized(new UserResponse(e.Message, false));
         }
     }
 
@@ -46,12 +50,14 @@ public class UserController : ControllerBase
     {
         try
         {
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+
             var result = await _userRepository.LogoutUser(userDto);
             return Ok(new UserResponse(result ? "Success" : "Fail", result));
         }
         catch (Exception e)
         {
-            return Ok(new UserResponse(e.Message, false));
+            return Unauthorized(new UserResponse(e.Message, false));
         }
     }
 }

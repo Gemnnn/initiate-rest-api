@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Initiate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240213032609_init")]
+    [Migration("20240214031127_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -26,17 +26,15 @@ namespace Initiate.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CountryId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("ProvinceId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ProvinceName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("AddressId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("ProvinceId");
 
                     b.ToTable("Addresses");
 
@@ -44,8 +42,8 @@ namespace Initiate.DataAccess.Migrations
                         new
                         {
                             AddressId = 1,
-                            CountryId = 1,
-                            ProvinceId = 1
+                            Country = "Canada",
+                            ProvinceName = "Ontario"
                         });
                 });
 
@@ -120,23 +118,28 @@ namespace Initiate.DataAccess.Migrations
 
             modelBuilder.Entity("Initiate.DataAccess.Preference", b =>
                 {
-                    b.Property<int>("PreferenceId")
+                    b.Property<int?>("PreferenceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("GenerateDate")
+                    b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool?>("IsSetPreference")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Language")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewsGenerationTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Province")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PreferenceId");
-
-                    b.HasIndex("AddressId");
 
                     b.ToTable("Preferences");
                 });
@@ -219,28 +222,6 @@ namespace Initiate.DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Initiate.Model.Country", b =>
-                {
-                    b.Property<int>("CountryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CountryName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CountryId");
-
-                    b.ToTable("Countries");
-
-                    b.HasData(
-                        new
-                        {
-                            CountryId = 1,
-                            CountryName = "Canada"
-                        });
-                });
-
             modelBuilder.Entity("Initiate.Model.Friend", b =>
                 {
                     b.Property<int>("FriendId")
@@ -265,28 +246,6 @@ namespace Initiate.DataAccess.Migrations
                     b.HasIndex("RequesterId");
 
                     b.ToTable("Friends");
-                });
-
-            modelBuilder.Entity("Initiate.Model.Province", b =>
-                {
-                    b.Property<int>("ProvinceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ProvinceName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ProvinceId");
-
-                    b.ToTable("Provinces");
-
-                    b.HasData(
-                        new
-                        {
-                            ProvinceId = 1,
-                            ProvinceName = "Ontario"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -439,25 +398,6 @@ namespace Initiate.DataAccess.Migrations
                     b.ToTable("UserKeywords");
                 });
 
-            modelBuilder.Entity("Initiate.DataAccess.Address", b =>
-                {
-                    b.HasOne("Initiate.Model.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Initiate.Model.Province", "Province")
-                        .WithMany()
-                        .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-
-                    b.Navigation("Province");
-                });
-
             modelBuilder.Entity("Initiate.DataAccess.NewsKeyword", b =>
                 {
                     b.HasOne("Initiate.DataAccess.Keyword", "Keyword")
@@ -475,17 +415,6 @@ namespace Initiate.DataAccess.Migrations
                     b.Navigation("Keyword");
 
                     b.Navigation("News");
-                });
-
-            modelBuilder.Entity("Initiate.DataAccess.Preference", b =>
-                {
-                    b.HasOne("Initiate.DataAccess.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Initiate.DataAccess.User", b =>

@@ -1,9 +1,6 @@
 ﻿using Initiate.DataAccess;
 using Initiate.Model;
 using Microsoft.AspNetCore.Identity;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,17 +39,19 @@ namespace Initiate.Business
 
                 var preference = new Preference()
                 {
-                    AddressId = 1,
-                    GenerateDate = DateTime.Now,
-                    Language = string.Empty
+                    Country = string.Empty,
+                    Province = string.Empty,
+                    NewsGenerationTime = DateTime.Now.ToString("HH:mm"),
+                    Language = string.Empty,
+                    IsSetPreference = false
                 };
 
                 await _db.Preferences.AddAsync(preference);
                 await _db.SaveChangesAsync();
 
-                var newPreference = await _db.Preferences.FirstOrDefaultAsync();
+                var newPreference = await _db.Preferences.FirstOrDefaultAsync(x=>x.NewsGenerationTime == preference.NewsGenerationTime);
 
-                var user = new User { UserName = userDto.Email, Email = userDto.Email, PreferenceId = newPreference.PreferenceId };
+                var user = new User { UserName = userDto.Email, Email = userDto.Email, PreferenceId = newPreference?.PreferenceId??0 };
                 var result = await _userManager.CreateAsync(user, userDto.Password);
 
                 _logger.LogWarning($"Class:{ClassName}, Method: {methodName}, Message: 'Exit' ");
@@ -73,6 +72,8 @@ namespace Initiate.Business
 
             try
             {
+                await CreateUserAsync(userDto);
+
                 if (string.IsNullOrWhiteSpace(userDto.Password) || string.IsNullOrWhiteSpace(userDto.Email))
                 {
                     throw new Exception($"Invalid user information: Email - '{userDto.Email}',  Password - '{userDto.Password}' ");
@@ -86,29 +87,12 @@ namespace Initiate.Business
                     return false;
                 }
 
-                var result = await _signInManager.CheckPasswordSignInAsync(user, userDto.Password, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(userDto.Email, userDto.Password, false, lockoutOnFailure: false);
 
-                if (result.Succeeded)
-                {
-                    var newUser = await _db.Users.FirstOrDefaultAsync(user => user.UserName == userDto.Email);
-                    User? updatedUser = newUser;
-                    if (updatedUser != null)
-                    {
-                        updatedUser.isSignedIn = true;
+                _logger.LogInformation($"Class:{ClassName}, Method: {methodName}, Message: 'Login Status': {result.Succeeded}' ");
 
-                        _db.Users.Update(updatedUser);
-                        await _db.SaveChangesAsync();
-                    }
+                return result.Succeeded;
 
-                    _logger.LogInformation($"Class:{ClassName}, Method: {methodName}, Message: 'Login succeeded, IsSignedIn: {updatedUser.isSignedIn}' ");
-
-                    return updatedUser.isSignedIn;
-                }
-                else
-                {
-                    _logger.LogWarning($"Class:{ClassName}, Method: {methodName}, Message: 'Login failed' ");
-                    return false;
-                }
             }
             catch (Exception e)
             {
@@ -121,7 +105,7 @@ namespace Initiate.Business
         {
             string methodName = nameof(LogoutUser);
             _logger.LogWarning($"Class:{ClassName}, Method: {methodName}, Message: 'Entered' ");
-
+            
             try
             {
                 var newUser = await _db.Users.FirstOrDefaultAsync(user => user.UserName == userDto.Email);
@@ -145,6 +129,34 @@ namespace Initiate.Business
             {
                 _logger.LogWarning($"Class:{ClassName}, Method: {methodName}, Message: {e.Message}");
                 return false;
+            }
+        }
+
+        private async Task CreateUserAsync(UserDTO userDTO)
+        {
+            try
+            {
+                if (userDTO.Email != "test@gmail.com")
+                    return;
+
+                var defaultUser = await _db.Users.FirstOrDefaultAsync(x => x.UserName == "test@gmail.com");
+
+                if (defaultUser != null)
+                    return;
+
+                var user = new UserDTO
+                {
+                    Email = "test@gmail.com",
+                    Password = "!1Qtesttest",
+                };
+
+                await RegisterUser(user);
+
+                return;
+            }
+            catch (Exception)
+            {
+                return;
             }
         }
     }

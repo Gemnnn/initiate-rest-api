@@ -1,8 +1,7 @@
 ﻿namespace Initiate.Model
 {
-    public class UserDTO
+    public class UserDTO : RequestBase
     {
-        public string? Email { get; set; }
         public string? Password { get; set; }
     }
 }

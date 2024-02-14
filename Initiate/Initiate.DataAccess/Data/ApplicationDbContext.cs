@@ -27,48 +27,19 @@ namespace Initiate.DataAccess
                 .HasForeignKey(f => f.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Country>()
-                .HasData(
-                    new Country()
-                    {
-                        CountryId = 1,
-                        CountryName = "Canada"
-                    }
-                );
-            builder.Entity<Province>()
-                .HasData(
-                    new Province()
-                    {
-                        ProvinceId = 1,
-                        ProvinceName = "Ontario"
-                    });
-
             builder.Entity<Address>()
                 .HasData(
                     new Address()
                     {
                         AddressId = 1,
-                        CountryId = 1,
-                        ProvinceId = 1
+                        Country = "Canada",
+                        ProvinceName = "Ontario"
                     }
                 );
-
-            //builder.Entity<Preference>()
-            //    .HasData(
-            //        new Preference()
-            //        {
-            //            PreferenceId = 1,
-            //            AddressId = 1,
-            //            GenerateDate = DateTime.Now,
-            //            Language = "English"
-            //        }
-            //    );
         }
 
         public DbSet<News> News { get; set; }
-        public DbSet<Province> Provinces { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<Country> Countries { get; set; }
         public DbSet<UserKeyword> UserKeywords { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<NewsKeyword> NewsKeywords { get; set; }
