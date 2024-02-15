@@ -61,11 +61,6 @@ builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Authentication & Authorization
-// Ensure you're using the correct authentication scheme
-//builder.Services.AddAuthentication(/* Your preferred authentication scheme */)
-//   .AddNegotiate(); // Use this only if you need Windows authentication
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

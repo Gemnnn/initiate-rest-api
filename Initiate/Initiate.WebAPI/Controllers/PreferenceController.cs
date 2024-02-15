@@ -20,7 +20,7 @@ namespace Initiate.WebAPI.Controllers
         }
 
         [HttpPut()]
-        [Authorize()]
+        //[Authorize()]
         public async Task<IActionResult> UpdatePreference([FromBody] PreferenceDTO preferenceDTO)
         {
             string Method = nameof(UpdatePreference);
@@ -43,7 +43,7 @@ namespace Initiate.WebAPI.Controllers
         }
 
         [HttpGet("{email}")]
-        [Authorize()]
+        //[Authorize()]
         public async Task<ActionResult<PreferenceDTO>> GetPreference(string email)
         {
             string Method = nameof(UpdatePreference);

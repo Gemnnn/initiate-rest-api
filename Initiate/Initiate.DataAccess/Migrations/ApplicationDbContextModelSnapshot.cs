@@ -17,33 +17,6 @@ namespace Initiate.DataAccess.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
 
-            modelBuilder.Entity("Initiate.DataAccess.Address", b =>
-                {
-                    b.Property<int>("AddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProvinceName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("AddressId");
-
-                    b.ToTable("Addresses");
-
-                    b.HasData(
-                        new
-                        {
-                            AddressId = 1,
-                            Country = "Canada",
-                            ProvinceName = "Ontario"
-                        });
-                });
-
             modelBuilder.Entity("Initiate.DataAccess.Keyword", b =>
                 {
                     b.Property<int>("KeywordId")
@@ -76,6 +49,9 @@ namespace Initiate.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PreferenceId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("PublishedDate")
                         .HasColumnType("TEXT");
 
@@ -88,6 +64,8 @@ namespace Initiate.DataAccess.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("NewsId");
+
+                    b.HasIndex("PreferenceId");
 
                     b.ToTable("News");
                 });
@@ -393,6 +371,17 @@ namespace Initiate.DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserKeywords");
+                });
+
+            modelBuilder.Entity("Initiate.DataAccess.News", b =>
+                {
+                    b.HasOne("Initiate.DataAccess.Preference", "Preference")
+                        .WithMany()
+                        .HasForeignKey("PreferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Preference");
                 });
 
             modelBuilder.Entity("Initiate.DataAccess.NewsKeyword", b =>

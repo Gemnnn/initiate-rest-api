@@ -37,7 +37,7 @@ public class UserController : ControllerBase
         try
         {
             var result = await _userRepository.LoginUser(userLoginDto);
-            return Ok(new UserResponse(result ? "Success" : "Fail", result));
+            return Ok(new UserResponse(result ? "Login Success" : "Login Fail", result));
         }
         catch (Exception e)
         {
