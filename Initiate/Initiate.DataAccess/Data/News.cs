@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Initiate.DataAccess
 {
@@ -11,6 +12,9 @@ namespace Initiate.DataAccess
         public string Source { get; set; }
         public string Desciprtion { get; set; }
         public ICollection<NewsKeyword> NewsKeywords { get; set; }
+        public int PreferenceId { get; set; }
+        [ForeignKey("PreferenceId")]
+        public Preference Preference { get; set; }
         public string Content { get; set; }
     }
 }

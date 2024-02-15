@@ -26,20 +26,9 @@ namespace Initiate.DataAccess
                 .WithMany(u => u.ReceivedFriends)
                 .HasForeignKey(f => f.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Address>()
-                .HasData(
-                    new Address()
-                    {
-                        AddressId = 1,
-                        Country = "Canada",
-                        ProvinceName = "Ontario"
-                    }
-                );
         }
 
         public DbSet<News> News { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<UserKeyword> UserKeywords { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<NewsKeyword> NewsKeywords { get; set; }

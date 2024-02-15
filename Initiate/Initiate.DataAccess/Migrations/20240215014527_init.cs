@@ -12,20 +12,6 @@ namespace Initiate.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Country = table.Column<string>(type: "TEXT", nullable: false),
-                    ProvinceName = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.AddressId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -50,24 +36,6 @@ namespace Initiate.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Keywords", x => x.KeywordId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "News",
-                columns: table => new
-                {
-                    NewsId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    PublishedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Author = table.Column<string>(type: "TEXT", nullable: false),
-                    Source = table.Column<string>(type: "TEXT", nullable: false),
-                    Desciprtion = table.Column<string>(type: "TEXT", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_News", x => x.NewsId);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,32 +77,6 @@ namespace Initiate.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NewsKeywords",
-                columns: table => new
-                {
-                    NewsKeywordId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NewsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    KeywordId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NewsKeywords", x => x.NewsKeywordId);
-                    table.ForeignKey(
-                        name: "FK_NewsKeywords_Keywords_KeywordId",
-                        column: x => x.KeywordId,
-                        principalTable: "Keywords",
-                        principalColumn: "KeywordId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_NewsKeywords_News_NewsId",
-                        column: x => x.NewsId,
-                        principalTable: "News",
-                        principalColumn: "NewsId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -163,6 +105,31 @@ namespace Initiate.DataAccess.Migrations
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Preferences_PreferenceId",
+                        column: x => x.PreferenceId,
+                        principalTable: "Preferences",
+                        principalColumn: "PreferenceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "News",
+                columns: table => new
+                {
+                    NewsId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    PublishedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Author = table.Column<string>(type: "TEXT", nullable: false),
+                    Source = table.Column<string>(type: "TEXT", nullable: false),
+                    Desciprtion = table.Column<string>(type: "TEXT", nullable: false),
+                    PreferenceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Content = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_News", x => x.NewsId);
+                    table.ForeignKey(
+                        name: "FK_News_Preferences_PreferenceId",
                         column: x => x.PreferenceId,
                         principalTable: "Preferences",
                         principalColumn: "PreferenceId",
@@ -307,10 +274,31 @@ namespace Initiate.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Addresses",
-                columns: new[] { "AddressId", "Country", "ProvinceName" },
-                values: new object[] { 1, "Canada", "Ontario" });
+            migrationBuilder.CreateTable(
+                name: "NewsKeywords",
+                columns: table => new
+                {
+                    NewsKeywordId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NewsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    KeywordId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewsKeywords", x => x.NewsKeywordId);
+                    table.ForeignKey(
+                        name: "FK_NewsKeywords_Keywords_KeywordId",
+                        column: x => x.KeywordId,
+                        principalTable: "Keywords",
+                        principalColumn: "KeywordId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_NewsKeywords_News_NewsId",
+                        column: x => x.NewsId,
+                        principalTable: "News",
+                        principalColumn: "NewsId",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -365,6 +353,11 @@ namespace Initiate.DataAccess.Migrations
                 column: "RequesterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_News_PreferenceId",
+                table: "News",
+                column: "PreferenceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_NewsKeywords_KeywordId",
                 table: "NewsKeywords",
                 column: "KeywordId");
@@ -388,9 +381,6 @@ namespace Initiate.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Addresses");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
