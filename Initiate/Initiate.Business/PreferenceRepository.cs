@@ -54,6 +54,7 @@ namespace Initiate.Business
                 Language = preference?.Language??"English",
                 NewsGenerationTime = preference.NewsGenerationTime??"",
                 Province = preference?.Province??"",
+                Email = user.Email,
             };
 
             return preferenceDTO;
