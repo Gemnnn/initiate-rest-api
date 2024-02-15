@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Initiate.Common\Initiate.Common.csproj" />
     <ProjectReference Include="..\Initiate.DataAccess\Initiate.DataAccess.csproj" />
     <ProjectReference Include="..\Initiate.Model\Initiate.Model.csproj" />
   </ItemGroup>
