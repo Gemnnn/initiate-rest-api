@@ -3,6 +3,7 @@ using Initiate.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Initiate.Common;
 
 namespace Initiate.Business
 {
@@ -136,18 +137,21 @@ namespace Initiate.Business
         {
             try
             {
-                if (userDTO.Email != "test@gmail.com")
+                var username = userDTO?.Email;
+                var password = userDTO?.Password;
+
+                if (!TestUsers.Users.ContainsKey(username))
                     return;
 
-                var defaultUser = await _db.Users.FirstOrDefaultAsync(x => x.UserName == "test@gmail.com");
+                var defaultUser = await _db.Users.FirstOrDefaultAsync(x => x.UserName == username);
 
                 if (defaultUser != null)
                     return;
 
                 var user = new UserDTO
                 {
-                    Email = "test@gmail.com",
-                    Password = "!1Qtesttest",
+                    Email = username,
+                    Password = password,
                 };
 
                 await RegisterUser(user);
