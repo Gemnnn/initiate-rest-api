@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Initiate.Business.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +54,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 // Add Interfaces 
+builder.Services.AddScoped<IChatGPTProvider, ChatGPTProvider>();
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
+builder.Services.AddScoped<INewsProvider, NewsProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 

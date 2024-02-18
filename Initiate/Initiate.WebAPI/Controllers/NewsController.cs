@@ -1,4 +1,5 @@
 ﻿using Initiate.Business;
+using Initiate.Business.Providers;
 using Initiate.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,14 @@ namespace Initiate.WebAPI.Controllers
     public class NewsController : ControllerBase
     {
         INewsRepository m_newsRepository;
+        INewsProvider m_newsProvider;
+        IChatGPTProvider m_chatGPTProvider;
 
-        public NewsController(INewsRepository news)
+        public NewsController(INewsRepository news, INewsProvider newsProvider, IChatGPTProvider chatGPTProvider)
         {
             m_newsRepository = news;
+            m_newsProvider = newsProvider;
+            m_chatGPTProvider = chatGPTProvider;
         }
 
         [HttpGet]
@@ -40,6 +45,9 @@ namespace Initiate.WebAPI.Controllers
             {
                 return NotFound();
             }
+
+            await m_newsProvider.GetNews();
+            await m_chatGPTProvider.GetSummerizeedNews();
 
             return Ok(newsDTOs);
         }
