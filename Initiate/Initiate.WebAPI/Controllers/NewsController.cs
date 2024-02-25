@@ -36,91 +36,62 @@ namespace Initiate.WebAPI.Controllers
             m_chatGPTProvider = chatGPTProvider;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<NewsDTO>>> GetAllNews()
+        [HttpGet("{username}/{keyword}")]
+        public async Task<ActionResult<IEnumerable<NewsResponse>>> GetAllNews(string keyword)
         {
-            var newsDTOs = await m_newsRepository.GetAllNews();
+            //var newsDTOs = await m_newsRepository.GetAllNews();
 
-            if (newsDTOs == null)
+            //if (newsDTOs == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //await m_newsProvider.GetNews();
+            //await m_chatGPTProvider.GetSummerizeedNews();
+
+            //return Ok(newsDTOs);
+
+
+            var newsList = new List<NewsResponse>();
+
+            newsList.Add(new NewsResponse()
             {
-                return NotFound();
-            }
+                Id = 1,
+                Title = "Test Title 1",
+                PublishedDate = DateTime.Now.ToString()
+            }); 
 
-            await m_newsProvider.GetNews();
-            await m_chatGPTProvider.GetSummerizeedNews();
+            newsList.Add(new NewsResponse()
+            {
+                Id = 2,
+                Title = "Test Title 2",
+                PublishedDate = DateTime.Now.ToString()
+            });
 
-            return Ok(newsDTOs);
+            return newsList; 
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<NewsDTO>> GetNews(int id)
+        [HttpGet("{username}/{id:int}")]
+        public async Task<ActionResult<NewsDetailResponse>> GetNews(int id, string username)
         {
-            var newsDTO = await m_newsRepository.GetNews(id);
+            //var newsDTO = await _newsRepository.GetNews(id, category);
 
-            if (newsDTO == null)
+            //if (newsDTO == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return Ok(newsDTO);
+
+            var response = new NewsDetailResponse()
             {
-                return NotFound();
-            }
+                Id = id,
+                Title = $"Test Title + {id}",
+                Content = $"Test Content + {id} + {username}",
+            };
 
-            return Ok(newsDTO);
-        }
 
-        [HttpPost]
-        public async Task<ActionResult<NewsDTO>> NewQuote([FromBody] NewsDTO newsDTO)
-        {
-            NewsDTO newsResult = null;
-
-            try
-            {
-                if (newsDTO == null)
-                    return BadRequest(newsDTO);
-
-                newsResult = await m_newsRepository.CreateNews(newsDTO);
-
-                if (newsResult == null)
-                    return BadRequest("Failed to create news");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return CreatedAtAction(nameof(NewQuote), new { id = newsResult.Id }, newsResult);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize()]
-        public async Task<IActionResult> UpdateNews(int id, [FromBody] NewsDTO quoteDto)
-        {
-            NewsDTO udpatedNews = null; 
-            try
-            {
-                udpatedNews = await m_newsRepository.UpdateNews(id, quoteDto);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return CreatedAtAction(nameof(NewQuote), new { id = udpatedNews.Id }, udpatedNews);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> UpdateNews(int id)
-        {
-            int result = 0;
-            try
-            {
-                result = await m_newsRepository.DeleteNews(id);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-            return CreatedAtAction(nameof(NewQuote), new { id = id }, result);
+            return Ok(response);
         }
     }
 }
