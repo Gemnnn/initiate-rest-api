@@ -31,7 +31,7 @@ namespace Initiate.DataAccess.Migrations
                 {
                     KeywordId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Word = table.Column<int>(type: "INTEGER", nullable: false)
+                    Word = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
