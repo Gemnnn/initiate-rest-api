@@ -26,6 +26,11 @@ public class PreferenceDTO : RequestBase
     public string? NewsGenerationTime { get; set; }
 
     /// <summary>
+    /// Indicates the Email of the user
+    /// </summary>
+    public string? Email { get; set; }
+
+    /// <summary>
     /// Indicates the preference of the user
     /// </summary>
     public bool? IsSetPreference { get; set; } = false;

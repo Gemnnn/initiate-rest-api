@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Initiate.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240225024904_init")]
+    [Migration("20240215014527_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -26,8 +26,8 @@ namespace Initiate.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Word")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Word")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("KeywordId");
 

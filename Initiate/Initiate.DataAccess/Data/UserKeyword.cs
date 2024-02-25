@@ -7,7 +7,7 @@ public class UserKeyword
 {
     [Key]
     public int UserKeywordId { get; set; }
-    public string UserId { get; set; }
+    public string UserId { get; set; } // Changed from int to string
     [ForeignKey("UserId")]
     public User User { get; set; }
 

@@ -10,7 +10,7 @@ namespace Initiate.Business
         public MappingProfile()
         {
             CreateMap<News, NewsDTO>().ReverseMap();
-            CreateMap<Keyword, KeywordDTO>().ReverseMap();
+
         }
     
     }

@@ -23,8 +23,8 @@ namespace Initiate.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Word")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Word")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("KeywordId");
 
