@@ -93,5 +93,109 @@ namespace Initiate.WebAPI.Controllers
 
             return Ok(response);
         }
+
+        //
+
+
+        [HttpGet("keyword/{username}/{keyword}")]
+        public async Task<ActionResult<IEnumerable<NewsResponse>>> GetAllKeywordNews(string username, string keyword)
+        {
+            var newsList = new List<NewsResponse>();
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 1,
+                Title = "Test Title 1",
+                PublishedDate = DateTime.Now.AddHours(-5).ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 2,
+                Title = "Test Title 2",
+                PublishedDate = DateTime.Now.AddHours(-4).ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 3,
+                Title = "Test Title 3",
+                PublishedDate = DateTime.Now.AddHours(-3).ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 4,
+                Title = "Test Title 4",
+                PublishedDate = DateTime.Now.AddHours(-2).ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 5,
+                Title = "Test Title 5",
+                PublishedDate = DateTime.Now.AddHours(-1).ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 6,
+                Title = "Test Title 6",
+                PublishedDate = DateTime.Now.ToString()
+            });
+
+            var sortedList = newsList.OrderBy(n => DateTime.Parse(n.PublishedDate)).ToList();
+
+
+            return Ok(sortedList);
+        }
+
+        [HttpGet("location/{username}/{keyword}")]
+        public async Task<ActionResult<IEnumerable<NewsResponse>>> GetAllLocationNews(string keyword)
+        {
+            var newsList = new List<NewsResponse>();
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 1,
+                Title = "Test Title 1",
+                PublishedDate = DateTime.Now.ToString()
+            });
+
+            newsList.Add(new NewsResponse()
+            {
+                Id = 2,
+                Title = "Test Title 2",
+                PublishedDate = DateTime.Now.ToString()
+            });
+
+            return newsList;
+        }
+
+        [HttpGet("location/{username}/{id:int}")]
+        public async Task<ActionResult<NewsDetailResponse>> GetLocationNews(int id, string username)
+        {
+            var response = new NewsDetailResponse()
+            {
+                Id = id,
+                Title = $"Test Title + {id}",
+                Content = $"Test Content + {id} + {username}",
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet("keyword/{username}/{id:int}")]
+        public async Task<ActionResult<NewsDetailResponse>> GetKeywordNews(int id, string username)
+        {
+            var response = new NewsDetailResponse()
+            {
+                Id = id,
+                Title = $"Test Title + {id}",
+                Content = $"Test Content + {id} + {username}",
+            };
+
+            return Ok(response);
+        }
     }
 }
