@@ -2,6 +2,8 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Initiate.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Initiate.Business.Providers
 {
@@ -9,9 +11,12 @@ namespace Initiate.Business.Providers
     {
         static readonly HttpClient client = new HttpClient();
 
+
         public async Task<(string ShortTitle, string Content)> GetSummarizedNews(string url)
         {
-            string apiKey = "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";
+            string apiKey = Constants.AIApiKey;
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new Exception("AI API key is empty. You must get api key first");
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
             var requestBody = new

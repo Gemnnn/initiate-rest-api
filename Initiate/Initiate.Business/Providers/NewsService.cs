@@ -1,4 +1,5 @@
 ﻿using Initiate.Business.Providers;
+using Initiate.Common;
 using Initiate.Model;
 using Newtonsoft.Json;
 using Initiate.DataAccess;
@@ -147,7 +148,10 @@ namespace Initiate.Business
                 throw new Exception($"No Keyword Found: {keyword}");
 
             string baseUrl = "https://gnews.io/api/v4/search?";
-            string apiKey = "cb68df24b23a70072eda3fd20b952af2";
+            string apiKey = Constants.NewApiKey;
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new Exception("News API key is empty. You must get api key first");
+            
             string url = $"{baseUrl}token={apiKey}&q={keyword}&from={yesterday}&to={today}&sortby=relevance";
 
             List<News> newsList = new List<News>();
