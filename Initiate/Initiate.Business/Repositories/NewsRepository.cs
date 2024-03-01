@@ -19,67 +19,58 @@ namespace Initiate.Business
             m_mapper = mapper;
         }
 
-        public async Task<NewsDTO> CreateNews(NewsDTO newsDTO)
+        public async Task<IEnumerable<NewsResponse>> GetAllKeywordNews(string username, string keyword)
         {
-            try
-            {
-                News news = m_mapper.Map<NewsDTO, News>(newsDTO);
-                var addedNews = await m_db.News.AddAsync(news);
-                await m_db.SaveChangesAsync();
+            var user = await m_db.Users.Include(x => x.News).FirstOrDefaultAsync(x => x.UserName == username);
 
-                return m_mapper.Map<News, NewsDTO>(addedNews.Entity);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            var news = user.News.Where(x => x.Keyword.ToLower() == keyword.ToLower());
+            var newsResponses = news.Select(x => new NewsResponse()
+                {
+                    Id = x.NewsId,
+                    Title = x.Title,
+                    ShortTitle = x.ShortTitle,
+                    PublishedDate = x.PublishedDate.ToString("HH:mm:ss")
+                }
+            );
+
+            return newsResponses;
         }
 
-        public async Task<int> DeleteNews(int id)
+        public async Task<IEnumerable<NewsResponse>> GetAllLocationNews(string username)
         {
-            var newsDetail = await m_db.News.FindAsync(id);
+            var user = await m_db.Users.Include(x => x.News).FirstOrDefaultAsync(x => x.UserName == username);
 
-            if (newsDetail != null)
-            {
-                m_db.News.Remove(newsDetail);
-                return await m_db.SaveChangesAsync();
-            }
-
-            return 0;
+            var news = user.News.Where(x => x.IsLocation == true);
+            var newsResponses = news.Select(x => new NewsResponse()
+                {
+                    Id = x.NewsId,
+                    Title = x.Title,
+                    ShortTitle = x.ShortTitle,
+                    PublishedDate = x.PublishedDate.ToString("HH:mm:ss")
+                }
+            );
+            return newsResponses;
         }
 
-        public async Task<IEnumerable<NewsDTO>> GetAllNews()
+        public async Task<NewsDetailResponse> GetNews(string username, int id)
         {
-            try
+            News? news = await m_db.News.FirstOrDefaultAsync(n => n.NewsId == id);
+
+            if (news == null)
+                throw new Exception("News is no found");
+
+            NewsDetailResponse newsDetailResponse = new NewsDetailResponse()
             {
-                IEnumerable<NewsDTO> newsDTOs = m_mapper.Map<IEnumerable<News>, IEnumerable<NewsDTO>>(m_db.News);
+                Id = news.NewsId,
+                Title = news.Title,
+                ShortTitle = news.ShortTitle,
+                SourceUrl = news.Source,
+                Author = news.Author,
+                PublishedDate = news.PublishedDate.ToString("HH:mm:ss"),
+                Content = news.Content
+            };
 
-                return newsDTOs;
-            }
-            catch (Exception ex)
-            {
-                //TODO: Add logger
-                return null;
-            }
-        }
-
-        public async Task<NewsDTO> GetNews(int id)
-        {
-            try
-            {
-                News? news = await m_db.News.FirstOrDefaultAsync(n => n.NewsId == id);
-
-                if (news == null)
-                    throw new Exception("News is no found");
-
-                NewsDTO newsDTO = m_mapper.Map<News, NewsDTO>(news);
-
-                return newsDTO;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return newsDetailResponse;
         }
 
         public async Task<NewsDTO> UpdateNews(int id, NewsDTO newsDTO)

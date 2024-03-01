@@ -13,7 +13,8 @@ namespace Initiate.DataAccess
         public bool isSignedIn { get; set; }
         [ForeignKey("PreferenceId")]
         public Preference Preference { get; set; }
-        public ICollection<UserKeyword> UserKeywords { get; set; }
+        public ICollection<News> News { get; set; } = new HashSet<News>();
+        public ICollection<Keyword> Keywords { get; set; } = new HashSet<Keyword>();
         public virtual ICollection<Friend> RequestedFriends { get; set; }
         public virtual ICollection<Friend> ReceivedFriends { get; set; }
     }

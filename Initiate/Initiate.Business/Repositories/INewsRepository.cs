@@ -4,10 +4,8 @@ namespace Initiate.Business
 {
     public interface INewsRepository
     {
-        public Task<NewsDTO> CreateNews(NewsDTO newsDTO);
-        public Task<NewsDTO> UpdateNews(int id, NewsDTO newsDTO);
-        public Task<int> DeleteNews(int id);
-        public Task<NewsDTO> GetNews(int id);
-        public Task<IEnumerable<NewsDTO>> GetAllNews();
+        public Task<NewsDetailResponse> GetNews(string username, int id);
+        public Task<IEnumerable<NewsResponse>> GetAllKeywordNews(string username,string keyword);
+        public Task<IEnumerable<NewsResponse>> GetAllLocationNews(string username);
     }
 }

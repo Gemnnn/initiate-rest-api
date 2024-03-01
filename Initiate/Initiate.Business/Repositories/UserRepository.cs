@@ -42,7 +42,7 @@ namespace Initiate.Business
                 {
                     Country = string.Empty,
                     Province = string.Empty,
-                    NewsGenerationTime = DateTime.Now.ToString("HH:mm"),
+                    NewsGenerationTime = DateTime.Now.ToString("HH:mm:ss"),
                     Language = string.Empty,
                     IsSetPreference = false
                 };

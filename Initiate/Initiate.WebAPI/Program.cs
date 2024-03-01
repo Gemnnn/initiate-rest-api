@@ -55,9 +55,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 // Add Interfaces 
-builder.Services.AddScoped<IChatGPTProvider, ChatGPTProvider>();
+
+builder.Services.AddHostedService<NewsServiceHostedService>();
+
+builder.Services.AddSingleton<INewsService>(provider =>
+    new NewsService(provider.GetRequiredService<IServiceScopeFactory>()));
+
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
-builder.Services.AddScoped<INewsProvider, NewsProvider>();
+//builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 builder.Services.AddScoped<IKeywordRepository, KeywordRepository>();

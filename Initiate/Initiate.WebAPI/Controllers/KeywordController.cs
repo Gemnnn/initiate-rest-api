@@ -67,12 +67,12 @@ namespace Initiate.WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{keyword}")]
-        public async Task<IActionResult> DeleteKeyword(string keyword)
+        [HttpDelete("{username}/{keyword}")]
+        public async Task<IActionResult> DeleteKeyword(string username,string keyword)
         {
             try
             {
-                await m_keywordRepository.DeleteKeyword(keyword);
+                await m_keywordRepository.DeleteKeyword(username,keyword);
 
             }
             catch (Exception ex)

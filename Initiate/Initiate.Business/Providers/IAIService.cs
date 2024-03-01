@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Initiate.Business.Providers
 {
-    public interface IChatGPTProvider
+    public interface IAIService
     {
         Task GetSummerizeedNews();
     }

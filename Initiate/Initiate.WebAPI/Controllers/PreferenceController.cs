@@ -10,13 +10,15 @@ namespace Initiate.WebAPI.Controllers
     [ApiController]
     public class PreferenceController : Controller
     {
-        IPreferenceRepository m_preferenceRepository;
+        private IPreferenceRepository m_preferenceRepository;
+        private INewsService m_newsService;
         ILogger<PreferenceController> m_logger;
 
-        public PreferenceController(IPreferenceRepository preferenceRepository, ILogger<PreferenceController> logger)
+        public PreferenceController(IPreferenceRepository preferenceRepository, INewsService newsService,  ILogger<PreferenceController> logger)
         {
             m_preferenceRepository = preferenceRepository;
             m_logger = logger;
+            m_newsService = newsService;
         }
 
         [HttpPut()]
@@ -29,6 +31,11 @@ namespace Initiate.WebAPI.Controllers
             {
                 m_logger.LogInformation("Entering UpdatePreference {Language}, {Province}, {Country}", preferenceDTO.Language, preferenceDTO.Province, preferenceDTO.Country);
                 result = await m_preferenceRepository.UpdatePreference(preferenceDTO);
+
+                if (result)
+                {
+                    m_newsService.UpdateTimer(preferenceDTO.Email,preferenceDTO.NewsGenerationTime);
+                }
             }
             catch (Exception ex)
             {

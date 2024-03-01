@@ -10,7 +10,7 @@ namespace Initiate.Business.Repositories
     public interface IKeywordRepository
     {
         public Task CreateKeyword(KeywordDTO keywordDTO);
-        public Task DeleteKeyword(string keyword);
+        public Task DeleteKeyword(string username, string keyword);
         public Task<IEnumerable<KeywordDTO>> GetAllKeyword(string username);
     }
 }
