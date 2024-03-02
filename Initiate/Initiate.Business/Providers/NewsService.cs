@@ -66,6 +66,14 @@ namespace Initiate.Business
         private void TimerEvent(string username)
         {
             SetDailyEventForUser(username);
+            
+            GetUser(username).ContinueWith(task =>
+            {
+                foreach (var keyword in task.Result.Keywords)
+                {
+                    GetKeywordNews(keyword.Word, username);
+                }
+            });
         }
 
         private async Task<User> GetUser(string username)
@@ -198,7 +206,6 @@ namespace Initiate.Business
             }
 
             var storedNewsList = await StoreNewsInDB(username, newsList);
-
             var newsResponseList = storedNewsList.Select(news => new NewsResponse
             {
                 Id = news.NewsId,
