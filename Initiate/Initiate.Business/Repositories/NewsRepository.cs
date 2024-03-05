@@ -66,7 +66,7 @@ namespace Initiate.Business
                 ShortTitle = news.ShortTitle,
                 SourceUrl = news.Source,
                 Author = news.Author,
-                PublishedDate = news.PublishedDate.ToString("HH:mm:ss"),
+                PublishedDate = news.PublishedDate.ToString("MMM dd, yyyy hh:mm:ss tt"),
                 Content = news.Content
             };
 
