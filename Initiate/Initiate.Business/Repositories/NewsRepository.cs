@@ -29,7 +29,7 @@ namespace Initiate.Business
                     Id = x.NewsId,
                     Title = x.Title,
                     ShortTitle = x.ShortTitle,
-                    PublishedDate = x.PublishedDate.ToString("HH:mm:ss")
+                    PublishedDate = x.PublishedDate.ToString("MMM dd, yyyy hh:mm:ss tt")
                 }
             );
 
