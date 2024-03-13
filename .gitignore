@@ -77,3 +77,4 @@ _[Ss]cripts
 .idea/
 Initiate/Initiate.WebAPI/Initiate.sqlite-shm
 Initiate/Initiate.WebAPI/Initiate.sqlite-wal
+Initiate/Initiate.Common/Constants.cs
