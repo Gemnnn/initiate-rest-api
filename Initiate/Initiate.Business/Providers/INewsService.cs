@@ -10,7 +10,7 @@ namespace Initiate.Business
     public interface INewsService
     {
         Task<IEnumerable<NewsResponse>> GetKeywordNews(string keyword,string username);
-        Task<IEnumerable<NewsResponse>> GetLocationNews(string location,string username);
+        Task<IEnumerable<LocationNewsRespone>> GetLocationNews(string location, string username);
         Task Initialize();
         Task UpdateTimer(string user, string date);
     }

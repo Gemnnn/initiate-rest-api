@@ -13,7 +13,7 @@ namespace Initiate.DataAccess
         public string Source { get; set; }
         public string Desciprtion { get; set; }
         public string Content { get; set; }
-        public string Keyword { get; set; } = string.Empty;
+        public string Keyword { get; set; }
         public bool IsLocation { get; set; } = false;
     }
 }

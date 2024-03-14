@@ -72,6 +72,7 @@ namespace Initiate.Business
                 foreach (var keyword in task.Result.Keywords)
                 {
                     GetKeywordNews(keyword.Word, username);
+                    GetLocationNews(keyword.Word, username);
                 }
             });
         }
@@ -249,50 +250,52 @@ namespace Initiate.Business
         }
 
 
-        public async Task<IEnumerable<NewsResponse>> GetLocationNews(string location, string username)
+        public async Task<IEnumerable<LocationNewsRespone>> GetLocationNews(string location, string username)
         {
             var yesterday = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
             var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
             var user = await GetUser(username);
             var province = await GetLocation(username);
-            var keywords = await GetKeywords(username);
-            var query = province + "AND" + keywords;
+            var keywordsString = await GetKeywords(username) ?? string.Empty;
+            var keywords = keywordsString.Split(new[] { " OR " }, StringSplitOptions.RemoveEmptyEntries);
+
 
             if (user == null)
                 throw new Exception($"No User Found. User: {username}");
-            
-            if (string.IsNullOrWhiteSpace(province) == true)
-                throw new Exception($"No province Found. Province: {province}");
 
-            
+            if (string.IsNullOrWhiteSpace(province))
+                throw new Exception("No province Found.");
+
             string baseUrl = "https://gnews.io/api/v4/search?";
             string apiKey = "cb68df24b23a70072eda3fd20b952af2";
-            string url = $"{baseUrl}token={apiKey}&q={query}&from={yesterday}&to={today}&sortby=relevance";
-            
             List<News> newsList = new List<News>();
             HashSet<string> titles = new HashSet<string>();
-            
-            using HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync(url);
-            
-            if (!response.IsSuccessStatusCode)
-                throw new Exception($"Failed to get news");
-            
-            string articles = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<ArticlesResponse>(articles);
-            
-            foreach (var article in result.Articles)
+
+            AIService aiService = new AIService();
+
+            foreach (var keyword in keywords)
             {
-                try
+                string query = $"{province} AND {keyword}";
+                string url = $"{baseUrl}token={apiKey}&q={query}&from={yesterday}&to={today}&sortby=relevance";
+
+                using HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Failed to get news");
+
+                string articles = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ArticlesResponse>(articles);
+
+                foreach (var article in result.Articles)
                 {
-                    if (!titles.Contains(article.Title) && !newsList.Any(n => n.Source == article.Url))
+                    if (!titles.Contains(article.Title))
                     {
                         titles.Add(article.Title);
-            
-                        AIService aiService = new AIService();
+
                         (var shortTitle, var summarizedNews) =
                             await aiService.GetSummarizedNews(article.Content);
-            
+
                         newsList.Add(new News
                         {
                             Title = article.Title,
@@ -302,28 +305,27 @@ namespace Initiate.Business
                             PublishedDate = DateTime.Now,
                             Desciprtion = article.Description,
                             Author = "Unknown",
-                            IsLocation = true
+                            IsLocation = true,
+                            Keyword = keyword 
                         });
                     }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
             }
 
-            var storedNewsList = await StoreNewsInDB(username,newsList);
-            
-            var newsResponseList = storedNewsList.Select(news => new NewsResponse
+            var storedNewsList = await StoreNewsInDB(username, newsList);
+
+            var newsResponseList = storedNewsList.Select(news => new LocationNewsRespone
             {
                 Id = news.NewsId,
                 Title = news.Title,
                 ShortTitle = news.ShortTitle,
-                PublishedDate = news.PublishedDate.ToString("yyyy-MM-dd")
+                PublishedDate = news.PublishedDate.ToString("yyyy-MM-dd"),
+                Keyword = news.Keyword 
             });
-            
+
             return newsResponseList;
         }
+
 
         public class UserTimer
         {

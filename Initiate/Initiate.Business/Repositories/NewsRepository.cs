@@ -36,17 +36,18 @@ namespace Initiate.Business
             return newsResponses;
         }
 
-        public async Task<IEnumerable<NewsResponse>> GetAllLocationNews(string username)
+        public async Task<IEnumerable<LocationNewsRespone>> GetAllLocationNews(string username)
         {
             var user = await m_db.Users.Include(x => x.News).FirstOrDefaultAsync(x => x.UserName == username);
 
             var news = user.News.Where(x => x.IsLocation == true);
-            var newsResponses = news.Select(x => new NewsResponse()
+            var newsResponses = news.Select(x => new LocationNewsRespone()
                 {
                     Id = x.NewsId,
                     Title = x.Title,
                     ShortTitle = x.ShortTitle,
-                    PublishedDate = x.PublishedDate.ToString("HH:mm:ss")
+                    PublishedDate = x.PublishedDate.ToString("MMM dd, yyyy hh:mm:ss tt"),
+                    Keyword = x.Keyword
                 }
             );
             return newsResponses;
