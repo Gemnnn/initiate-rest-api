@@ -57,8 +57,9 @@ namespace Initiate.WebAPI.Controllers
             try
             {
                 var newsList = await m_newsRepository.GetAllLocationNews(username);
+                var sortedList = newsList.OrderBy(n => DateTime.Parse(n.PublishedDate)).ToList();
 
-                return Ok(newsList);
+                return Ok(sortedList);
             }
             catch (Exception e)
             {
