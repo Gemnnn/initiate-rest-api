@@ -14,6 +14,7 @@ namespace Initiate.Business.Providers
 
         public async Task<(string ShortTitle, string Content)> GetSummarizedNews(string url)
         {
+            //Create a message to request to AI.
             string apiKey = Constants.AIApiKey;
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new Exception("AI API key is empty. You must get api key first");
@@ -21,6 +22,7 @@ namespace Initiate.Business.Providers
 
             var requestBody = new
             {
+                // model = "gpt-4",
                 model = "gpt-3.5-turbo",
                 messages = new[]
                 {
@@ -34,6 +36,7 @@ namespace Initiate.Business.Providers
                 }
             };
 
+            //Request and wait for response.
             string requestJson = JsonConvert.SerializeObject(requestBody);
             var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
@@ -44,6 +47,7 @@ namespace Initiate.Business.Providers
                 string responseJson = await response.Content.ReadAsStringAsync();
                 var chatResponse = JsonConvert.DeserializeObject<ChatCompletionResponse>(responseJson);
                 
+                //Parse the summarized news and short title from the response which is from chat gpt.
                 return ExtractSummarizedNews(chatResponse.Choices.FirstOrDefault()?.Message.Content);
             }
             else

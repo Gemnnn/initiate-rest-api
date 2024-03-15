@@ -3,7 +3,7 @@ using Initiate.DataAccess;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Initiate.Model // 프로젝트의 네임스페이스에 맞게 조정해 주세요.
+namespace Initiate.Model
 {
     public class Friend
     {
@@ -23,8 +23,7 @@ namespace Initiate.Model // 프로젝트의 네임스페이스에 맞게 조정해 주세요.
 
     public enum RequestStatus
     {
-        Pending, 
-        Accepted, 
-        Declined 
+        Pending = 1, 
+        Accepted,
     }
 }

@@ -146,32 +146,36 @@ namespace Initiate.Business
 
         public async Task<IEnumerable<NewsResponse>> GetKeywordNews(string keyword, string username)
         {
+            // Calculates past 24 hours from current time.
             var yesterday = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
             var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string baseUrl = "https://gnews.io/api/v4/search?";
+
             var user = await GetUser(username);
 
+            //Checks if there is user.
             if (user == null)
                 throw new Exception($"No User Found. User: {username}");
             
+            //Checks if user has requested keyword
             if(user.Keywords.Any(x=>x.Word.ToLower() == keyword.ToLower()) == false)
                 throw new Exception($"No Keyword Found: {keyword}");
-
-            string baseUrl = "https://gnews.io/api/v4/search?";
-            string apiKey = Constants.NewApiKey;
-            if (string.IsNullOrWhiteSpace(apiKey))
+            
+            //Check if apiKey for news source is empty.
+            if (string.IsNullOrWhiteSpace(Constants.NewApiKey))
                 throw new Exception("News API key is empty. You must get api key first");
             
-            string url = $"{baseUrl}token={apiKey}&q={keyword}&from={yesterday}&to={today}&sortby=relevance";
+            string url = $"{baseUrl}token={Constants.NewApiKey}&q={keyword}&from={yesterday}&to={today}&sortby=relevance";
 
             List<News> newsList = new List<News>();
             HashSet<string> titles = new HashSet<string>();
-
             using HttpClient client = new HttpClient();
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Failed to get news");
 
+            //Requests to get news to news provider and wait for response.
             string articles = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<ArticlesResponse>(articles);
 
@@ -179,11 +183,13 @@ namespace Initiate.Business
             {
                 try
                 {
+                    //Check duplicated news in the news source.
                     if (!titles.Contains(article.Title) && !newsList.Any(n => n.Source == article.Url))
                     {
                         titles.Add(article.Title);
 
                         AIService aiService = new AIService();
+                        //Requests to summarize new from origin news and get short title and summarized news from ai service
                         (var shortTitle, var summarizedNews) =
                             await aiService.GetSummarizedNews(article.Content);
 
@@ -202,10 +208,11 @@ namespace Initiate.Business
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    throw new Exception(e.Message);
                 }
             }
 
+            //Store in the db
             var storedNewsList = await StoreNewsInDB(username, newsList);
             var newsResponseList = storedNewsList.Select(news => new NewsResponse
             {
@@ -215,6 +222,7 @@ namespace Initiate.Business
                 PublishedDate = news.PublishedDate.ToString("yyyy-MM-dd")
             });
 
+            //return the news response list to the controller
             return newsResponseList;
         }
 
