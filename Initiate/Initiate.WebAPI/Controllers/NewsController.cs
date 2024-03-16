@@ -16,10 +16,12 @@ namespace Initiate.WebAPI.Controllers
     /// DO NOT use the News object in here.
     /// MUST use a DTO object because it utilizes loose coupling,
     /// 
-    /// Basic Structure.
+    /// Get news from database.
     /// SQL <-----------------> NewsRepository(Business) <-------> NewsController(WebAPI) <------------> Front end (Android)
     ///      News(DataAccess)                             NewsDTO                          REST(NewDTO)
-    ///    
+    /// Summarize News.
+    /// SQL <-----------------> NewsService/AIService(Business) <-------> NewsController(WebAPI) <------------> Front end (Android)
+    ///      News(DataAccess)                             NewsDTO                          REST(NewDTO)
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -100,7 +102,10 @@ namespace Initiate.WebAPI.Controllers
         {
             try
             {
+                //Requests to summarize news with keyword and username
                 var result = await m_newsService.GetKeywordNews(keyword,username);
+                
+                //Send the news list to the front end.
                 return Ok(result.ToList());
             }
             catch (Exception e)
