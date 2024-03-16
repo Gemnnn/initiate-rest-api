@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Initiate.Model
 {
-    public class LocationNewsRespone
+    public class LocationNewsRespone : NewsResponse
     {
-        public int? Id { get; set; }
-        public string? Title { get; set; }
-        public string? ShortTitle { get; set; }
-        public string? PublishedDate { get; set; }
+        //public int? Id { get; set; }
+        //public string? Title { get; set; }
+        //public string? ShortTitle { get; set; }
+        //public string? PublishedDate { get; set; }
         public string? Keyword { get; set;}
     }
 }
