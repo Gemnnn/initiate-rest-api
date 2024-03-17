@@ -94,6 +94,7 @@ namespace Initiate.Business.Repositories
                         Desciprtion = news.Desciprtion,
                         Content = news.Content,
                         Keyword = news.Keyword,
+                        Provider = news.Provider,
                         IsLocation = news.IsLocation
                     };
                     
