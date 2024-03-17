@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
+using Initiate.DataAccess.Data;
 
 namespace Initiate.DataAccess
 {
@@ -29,12 +30,10 @@ namespace Initiate.DataAccess
         }
 
         public DbSet<News> News { get; set; }
-        public DbSet<UserKeyword> UserKeywords { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
-        public DbSet<NewsKeyword> NewsKeywords { get; set; }
         public DbSet<Preference> Preferences { get; set; }
         public DbSet<Friend> Friends { get; set; }
-
+        public DbSet<SharedKeyword> SharedKeywords { get; set; }
         
 
     }

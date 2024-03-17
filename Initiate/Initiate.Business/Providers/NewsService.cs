@@ -190,18 +190,22 @@ namespace Initiate.Business
 
                         AIService aiService = new AIService();
                         //Requests to summarize new from origin news and get short title and summarized news from ai service
-                        (var shortTitle, var summarizedNews) =
+                        (var shortTitle, var summarizedNews, var provider) =
                             await aiService.GetSummarizedNews(article.Content);
 
+                        if(string.IsNullOrWhiteSpace(summarizedNews))
+                            continue;
+                        
                         newsList.Add(new News
                         {
                             Title = article.Title,
-                            ShortTitle = shortTitle,
+                            ShortTitle = string.IsNullOrWhiteSpace(shortTitle)?article.Title:shortTitle,
                             Content = summarizedNews,
                             Source = article.Url,
                             PublishedDate = DateTime.Now,
                             Desciprtion = article.Description,
                             Author = "Unknown",
+                            Provider = provider,
                             Keyword = keyword
                         });
                     }
@@ -301,7 +305,7 @@ namespace Initiate.Business
                     {
                         titles.Add(article.Title);
 
-                        (var shortTitle, var summarizedNews) =
+                        (var shortTitle, var summarizedNews, var provider) =
                             await aiService.GetSummarizedNews(article.Content);
 
                         newsList.Add(new News
@@ -314,6 +318,7 @@ namespace Initiate.Business
                             Desciprtion = article.Description,
                             Author = "Unknown",
                             IsLocation = true,
+                            Provider = provider,
                             Keyword = keyword 
                         });
                     }

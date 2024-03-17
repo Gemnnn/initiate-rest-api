@@ -14,6 +14,7 @@ namespace Initiate.DataAccess
         public string Desciprtion { get; set; }
         public string Content { get; set; }
         public string Keyword { get; set; }
+        public string Provider { get; set; }
         public bool IsLocation { get; set; } = false;
     }
 }

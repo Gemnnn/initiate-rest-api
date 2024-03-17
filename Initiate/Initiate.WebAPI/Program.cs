@@ -14,8 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Use SQLite or SQL Server based on your requirements
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Allows only specific type of requests in production for security
 builder.Services.AddCors(options =>
@@ -62,11 +60,11 @@ builder.Services.AddSingleton<INewsService>(provider =>
     new NewsService(provider.GetRequiredService<IServiceScopeFactory>()));
 
 builder.Services.AddScoped<INewsRepository, NewsRepository>();
-//builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 builder.Services.AddScoped<IKeywordRepository, KeywordRepository>();
 builder.Services.AddScoped<IFriendRepository, FriendRepository>();
+builder.Services.AddScoped<ISharedKeywordRepository, SharedKeywordRepository>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

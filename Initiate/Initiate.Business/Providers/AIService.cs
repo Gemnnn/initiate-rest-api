@@ -12,13 +12,14 @@ namespace Initiate.Business.Providers
         static readonly HttpClient client = new HttpClient();
 
 
-        public async Task<(string ShortTitle, string Content)> GetSummarizedNews(string url)
+        public async Task<(string ShortTitle, string Content, string Provider)> GetSummarizedNews(string url)
         {
             //Create a message to request to AI.
             string apiKey = Constants.AIApiKey;
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new Exception("AI API key is empty. You must get api key first");
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
 
             var requestBody = new
             {
@@ -27,11 +28,15 @@ namespace Initiate.Business.Providers
                 messages = new[]
                 {
                     new { role = "system", content = "You are a helpful assistant." },
-                    new { role = "user", content = $"Summarize the news in 100 words or less."+ 
-                                                    "Summarize news titles to 4 words or less." +
-                                                    "Short Title: 'Here write the Summarized news title'" +
-                                                    "Content: here write the Summarized news content" +
-                                                    $"This is a news url. {url}"
+                    new
+                    {
+                        role = "user", content = $"Summarize the news in 100 words or less." +
+                                                 "Summarize news titles to 4 words or less." +
+                                                 "Short Title: 'Here write the Summarized news title'" +
+                                                 "Content: here write the Summarized news content" +
+                                                 "Provider:  provide me a newspaper or new provider name or site name" +
+                                                 "Do not prompt any read more, you must include the Short Title, Content and Provider"+
+                                                 $"This is a news url. {url}"
                     }
                 }
             };
@@ -40,33 +45,37 @@ namespace Initiate.Business.Providers
             string requestJson = JsonConvert.SerializeObject(requestBody);
             var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await client.PostAsync("https://api.openai.com/v1/chat/completions", content);
+            HttpResponseMessage response =
+                await client.PostAsync("https://api.openai.com/v1/chat/completions", content);
 
             if (response.IsSuccessStatusCode)
             {
                 string responseJson = await response.Content.ReadAsStringAsync();
                 var chatResponse = JsonConvert.DeserializeObject<ChatCompletionResponse>(responseJson);
-                
+
                 //Parse the summarized news and short title from the response which is from chat gpt.
                 return ExtractSummarizedNews(chatResponse.Choices.FirstOrDefault()?.Message.Content);
             }
             else
             {
-                return (string.Empty, string.Empty);
+                return (string.Empty, string.Empty, string.Empty);
             }
         }
-        
-        
-        public (string ShortTitle, string Content) ExtractSummarizedNews(string summarizedText)
+
+
+        public (string ShortTitle, string Content, string Provider) ExtractSummarizedNews(string summarizedText)
         {
             string shortTitlePrefix = "Short Title:";
             string contentPrefix = "Content:";
-    
+            string providerPrefix = "Provider:";
+
             string shortTitle = string.Empty;
             string content = string.Empty;
+            string provider = string.Empty;
 
             int shortTitleStartIndex = summarizedText.IndexOf(shortTitlePrefix);
             int contentStartIndex = summarizedText.IndexOf(contentPrefix);
+            int providerStartIndex = summarizedText.IndexOf(providerPrefix);
 
             if (shortTitleStartIndex != -1 && contentStartIndex != -1)
             {
@@ -83,29 +92,39 @@ namespace Initiate.Business.Providers
                 }
 
                 // Extract Content
-                content = summarizedText.Substring(contentStartIndex).Trim();
+                if (providerStartIndex != -1)
+                {
+                    // If provider prefix is found, extract content up to the provider
+                    providerStartIndex += providerPrefix.Length;
+                    content = summarizedText.Substring(contentStartIndex,
+                        providerStartIndex - contentStartIndex - providerPrefix.Length).Trim();
+                    // Extract Provider
+                    provider = summarizedText.Substring(providerStartIndex).Trim();
+                }
+                else
+                {
+                    // If no provider prefix is found, the rest of the text is content
+                    content = summarizedText.Substring(contentStartIndex).Trim();
+                }
             }
 
-            return (ShortTitle: shortTitle, Content: content);
+            return (ShortTitle: shortTitle, Content: content, Provider: provider);
         }
 
-    }
-    
-    public class ChatCompletionResponse
-    {
-        [JsonProperty("choices")]
-        public List<Choice> Choices { get; set; }
-    }
 
-    public class Choice
-    {
-        [JsonProperty("message")]
-        public Message Message { get; set; }
-    }
+        public class ChatCompletionResponse
+        {
+            [JsonProperty("choices")] public List<Choice> Choices { get; set; }
+        }
 
-    public class Message
-    {
-        [JsonProperty("content")]
-        public string Content { get; set; }
+        public class Choice
+        {
+            [JsonProperty("message")] public Message Message { get; set; }
+        }
+
+        public class Message
+        {
+            [JsonProperty("content")] public string Content { get; set; }
+        }
     }
 }
