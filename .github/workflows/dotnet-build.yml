@@ -17,13 +17,13 @@ jobs:
     - name: Setup .NET 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '7.0.401'  # Specify the .NET 7 version to match your project requirements
+        dotnet-version: '7.0.401'  # Use the specific version of .NET 7 you are using
 
-    - name: Restore dependencies
-      run: dotnet restore ./Initiate/Initiate.sln
+    - name: Restore dependencies for the Web API project
+      run: dotnet restore ./Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj
 
-    - name: Build solution
-      run: dotnet build ./Initiate/Initiate.sln --no-restore --configuration Release
+    - name: Build Web API project
+      run: dotnet build ./Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj --no-restore --configuration Release
 
-    - name: Publish project
+    - name: Publish Web API project
       run: dotnet publish ./Initiate/Initiate.WebAPI/Initiate.WebAPI.csproj --no-build --configuration Release --output publish
