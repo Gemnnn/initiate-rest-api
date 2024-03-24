@@ -1,4 +1,4 @@
-name: .NET 7 Build and Test
+name: .NET 7 Build and Publish
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build-and-publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '7.0.401'  # Use the specific version of .NET 7 you are using
+        dotnet-version: '7.0.401'  # Specify the .NET 7 version to match your project requirements
 
     - name: Restore dependencies
       run: dotnet restore ./Initiate/Initiate.sln
