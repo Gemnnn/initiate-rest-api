@@ -190,8 +190,8 @@ namespace Initiate.Business
 
                         AIService aiService = new AIService();
                         //Requests to summarize new from origin news and get short title and summarized news from ai service
-                        (var shortTitle, var summarizedNews, var provider) =
-                            await aiService.GetSummarizedNews(article.Content);
+                        (var shortTitle, var summarizedNews, var provider,var date) =
+                            await aiService.GetSummarizedNews(article.Url);
 
                         if(string.IsNullOrWhiteSpace(summarizedNews))
                             continue;
@@ -270,16 +270,18 @@ namespace Initiate.Business
             var province = await GetLocation(username);
             var keywordsString = await GetKeywords(username) ?? string.Empty;
             var keywords = keywordsString.Split(new[] { " OR " }, StringSplitOptions.RemoveEmptyEntries);
-
-
+            
             if (user == null)
                 throw new Exception($"No User Found. User: {username}");
 
             if (string.IsNullOrWhiteSpace(province))
                 throw new Exception("No province Found.");
 
+            //Check if apiKey for news source is empty.
+            if (string.IsNullOrWhiteSpace(Constants.NewApiKey))
+                throw new Exception("News API key is empty. You must get api key first");
+
             string baseUrl = "https://gnews.io/api/v4/search?";
-            string apiKey = "cb68df24b23a70072eda3fd20b952af2";
             List<News> newsList = new List<News>();
             HashSet<string> titles = new HashSet<string>();
 
@@ -288,7 +290,7 @@ namespace Initiate.Business
             foreach (var keyword in keywords)
             {
                 string query = $"{province} AND {keyword}";
-                string url = $"{baseUrl}token={apiKey}&q={query}&from={yesterday}&to={today}&sortby=relevance";
+                string url = $"{baseUrl}token={Constants.NewApiKey}&q={query}&from={yesterday}&to={today}&sortby=relevance";
 
                 using HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync(url);
@@ -305,8 +307,8 @@ namespace Initiate.Business
                     {
                         titles.Add(article.Title);
 
-                        (var shortTitle, var summarizedNews, var provider) =
-                            await aiService.GetSummarizedNews(article.Content);
+                        (var shortTitle, var summarizedNews, var provider, var date) =
+                            await aiService.GetSummarizedNews(article.Url);
 
                         newsList.Add(new News
                         {

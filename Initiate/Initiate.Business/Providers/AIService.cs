@@ -11,8 +11,7 @@ namespace Initiate.Business.Providers
     {
         static readonly HttpClient client = new HttpClient();
 
-
-        public async Task<(string ShortTitle, string Content, string Provider)> GetSummarizedNews(string url)
+        public async Task<(string ShortTitle, string Content, string Provider, string Date)> GetSummarizedNews(string url)
         {
             //Create a message to request to AI.
             string apiKey = Constants.AIApiKey;
@@ -30,11 +29,12 @@ namespace Initiate.Business.Providers
                     new { role = "system", content = "You are a helpful assistant." },
                     new
                     {
-                        role = "user", content = $"Summarize the news in 100 words or less." +
+                        role = "user", content = $"Summarize the news." +
                                                  "Summarize news titles to 4 words or less." +
                                                  "Short Title: 'Here write the Summarized news title'" +
-                                                 "Content: here write the Summarized news content" +
+                                                 "Content: Summarize news in between 50 ~ 100 words" +
                                                  "Provider:  provide me a newspaper or new provider name or site name" +
+                                                 "Date: provide me a date when news is issued. format is like that MMM dd, yyyy hh:mm:ss tt"+
                                                  "Do not prompt any read more, you must include the Short Title, Content and Provider"+
                                                  $"This is a news url. {url}"
                     }
@@ -58,12 +58,12 @@ namespace Initiate.Business.Providers
             }
             else
             {
-                return (string.Empty, string.Empty, string.Empty);
+                return (string.Empty, string.Empty, string.Empty, string.Empty);
             }
         }
 
 
-        public (string ShortTitle, string Content, string Provider) ExtractSummarizedNews(string summarizedText)
+        public (string ShortTitle, string Content, string Provider, String Date) ExtractSummarizedNews(string summarizedText)
         {
             string shortTitlePrefix = "Short Title:";
             string contentPrefix = "Content:";
@@ -72,6 +72,7 @@ namespace Initiate.Business.Providers
             string shortTitle = string.Empty;
             string content = string.Empty;
             string provider = string.Empty;
+            string date = string.Empty;
 
             int shortTitleStartIndex = summarizedText.IndexOf(shortTitlePrefix);
             int contentStartIndex = summarizedText.IndexOf(contentPrefix);
@@ -99,7 +100,11 @@ namespace Initiate.Business.Providers
                     content = summarizedText.Substring(contentStartIndex,
                         providerStartIndex - contentStartIndex - providerPrefix.Length).Trim();
                     // Extract Provider
-                    provider = summarizedText.Substring(providerStartIndex).Trim();
+                    var splitText = summarizedText.Split("\n");
+                    provider = splitText.FirstOrDefault(x => x.StartsWith("Provider:")).Replace("Provider:","");
+                    date = splitText.FirstOrDefault(x => x.StartsWith("Date:")).Replace("Date:","");
+                    // provider = summarizedText.Substring(providerStartIndex).Trim();
+                    // date = summarizedText.Substring(providerStartIndex).Trim();
                 }
                 else
                 {
@@ -108,7 +113,7 @@ namespace Initiate.Business.Providers
                 }
             }
 
-            return (ShortTitle: shortTitle, Content: content, Provider: provider);
+            return (ShortTitle: shortTitle, Content: content, Provider: provider, Date:date);
         }
 
 
