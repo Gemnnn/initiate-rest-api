@@ -22,13 +22,15 @@ public class ShareKeywordController : Controller
         // Logic to retrieve shared keywords for the user
         var sharedKeywords = await _sharedKeywordRepository.GetSharedKeywordsAsync(username);
 
-        if (sharedKeywords == null || !sharedKeywords.Any())
+        // Extract keyword + the requestor's username
+        // No logic neccessary for empty/null list -> Can just display empty list
+        var keywords = sharedKeywords.Select(sk => new
         {
-            return Ok(new { isSuccess = false, message = "No shared keywords found." });
-        }
-
-        var keywords = sharedKeywords.Select(sk => sk.Keyword).ToList(); // Extract just the keyword strings
-
+            sk.Keyword,
+            sk.Requestor,
+            sk.Receiver
+        }).ToList();
+        
         return Ok(keywords);
     }
 
