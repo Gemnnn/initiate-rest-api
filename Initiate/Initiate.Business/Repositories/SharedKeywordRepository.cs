@@ -100,8 +100,9 @@ namespace Initiate.Business.Repositories
                     
                     receiver.News.Add(clonedNews);
                 }
-                
-                sharedKeyword.IsAccepted = true;
+
+                // Remove from sharedKeywords once the keyword/news has been added
+                _context.SharedKeywords.Remove(sharedKeyword);
             }
             else
             {
