@@ -204,7 +204,7 @@ namespace Initiate.Business
                             Source = article.Url,
                             PublishedDate = DateTime.Now,
                             Desciprtion = article.Description,
-                            Author = "Unknown",
+                            Author = provider,
                             Provider = provider,
                             Keyword = keyword
                         });
@@ -316,7 +316,7 @@ namespace Initiate.Business
                             Source = article.Url,
                             PublishedDate = DateTime.Now,
                             Desciprtion = article.Description,
-                            Author = "Unknown",
+                            Author = provider,
                             IsLocation = true,
                             Provider = provider,
                             Keyword = keyword 
