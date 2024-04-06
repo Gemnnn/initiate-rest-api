@@ -8,3 +8,6 @@ The Initiate News API powers the innovative Initiate News mobile app, designed t
 - **GPT Integration**: Integrates with Generative Pre-trained Transformer (GPT) API for AI-driven news summarization.
 - **Security**: Ensures the protection and privacy of user data.
 - **Social Sharing**: Allows users to share news content, enhancing the app's community experience.
+
+## Please see the link below for more information
+[Initiate News Moblie Appliaction](https://github.com/Gemnnn/Initiate-News)
